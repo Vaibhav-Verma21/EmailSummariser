@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmSum - Email Summarizer (Dark)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensure pre tag respects newlines well */
+        pre {
+             white-space: pre-wrap;
+             word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-100 font-sans text-gray-800 p-4 md:p-8 min-h-screen
+             dark:from-gray-900 dark:to-slate-800 dark:text-gray-200">
+
+    <div class="container max-w-3xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-lg
+                dark:bg-gray-800">
+
+        <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8
+                   dark:text-white">
+            EmSum - Email Summarizer 📧
+        </h1>
+
+        <div class="input-section mb-8">
+            <label for="emailInput" class="block mb-2 text-lg font-medium text-gray-700
+                                          dark:text-gray-300">
+                Paste Email Content:
+            </label>
+            <textarea id="emailInput" rows="12"
+                      class="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-base mb-5 resize-y
+                             dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Paste the full email text here..."></textarea>
+
+            <button id="summarizeBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none
+                           dark:bg-blue-700 dark:hover:bg-blue-600 dark:disabled:opacity-50">
+                Summarize Email ✨
+            </button>
+
+            <div id="loadingIndicator" class="text-center text-blue-600 my-4 hidden
+                                             dark:text-blue-400">
+                <svg class="animate-spin h-6 w-6 text-blue-600 dark:text-blue-400 inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing... please wait.
+            </div>
+
+             <div id="errorDisplay" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mt-5 text-center hidden
+                                         dark:bg-red-900 dark:bg-opacity-50 dark:border-red-700 dark:text-red-300">
+                </div>
+        </div>
+
+        <div class="output-section space-y-6">
+
+            <div class="output-box bg-gray-50 p-5 border border-gray-200 rounded-lg shadow-sm
+                                   dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-300 pb-2 mb-3
+                           dark:text-gray-200 dark:border-gray-500">
+                    📌 Summary
+                </h2>
+                <pre id="summaryOutput" class="bg-white p-3 rounded border border-gray-200 text-sm text-gray-600 min-h-[60px]
+                                             dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">Summary will appear here...</pre>
+            </div>
+
+            <div class="output-box bg-gray-50 p-5 border border-gray-200 rounded-lg shadow-sm
+                                   dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-300 pb-2 mb-3
+                           dark:text-gray-200 dark:border-gray-500">
+                    ✅ Tasks and Action Items
+                </h2>
+                <pre id="tasksOutput" class="bg-white p-3 rounded border border-gray-200 text-sm text-gray-600 min-h-[60px]
+                                            dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">Tasks will appear here...</pre>
+            </div>
+
+            <div class="output-box bg-gray-50 p-5 border border-gray-200 rounded-lg shadow-sm
+                                   dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-300 pb-2 mb-3
+                           dark:text-gray-200 dark:border-gray-500">
+                    📊 Sentiment Analysis
+                </h2>
+                <pre id="sentimentOutput" class="bg-white p-3 rounded border border-gray-200 text-sm text-gray-600 min-h-[60px]
+                                              dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">Sentiment analysis will appear here...</pre>
+            </div>
+        </div>
+
+    </div><script src="script.js"></script>
+</body>
+</html>
