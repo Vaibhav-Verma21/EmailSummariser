@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
             model: "gemini-1.5-flash-latest",
-            systemInstruction: `You are EmSum, an intelligent email summarizer bot.
+            systemInstruction: `You are EmSum, a smart assistant designed to extract and summarize key information from emails.
 Your job is to process a given email and output the following structured sections:
 
 📌 Summary (in bullet points):
