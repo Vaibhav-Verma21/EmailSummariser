@@ -3,94 +3,602 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmSum - Email Summarizer (Dark)</title>
+    <title>EmSum - Email Summarizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            light: '#3b82f6',
+                            dark: '#2563eb',
+                        }
+                    },
+                    animation: {
+                        'fade-in-down': 'fadeInDown 0.5s ease-out forwards',
+                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         /* Ensure pre tag respects newlines well */
         pre {
-             white-space: pre-wrap;
-             word-wrap: break-word;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        /* Transitions for theme switching */
+        .transition-theme {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        /* Main section color transition */
+        .main-section {
+            transition: background-color 0.8s ease, border-color 0.8s ease;
+        }
+        
+        /* Gradient backgrounds */
+        .bg-gradient-dark {
+            background: linear-gradient(to bottom right, #1e293b, #0f172a);
+        }
+        
+        .bg-gradient-light {
+            background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+        }
+        
+        /* Gradient text */
+        .gradient-text-dark {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-text-light {
+            background: linear-gradient(90deg, #1d4ed8, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Result animation classes */
+        .result-animation {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .result-animation.active {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Color change animation */
+        .color-change {
+            animation: colorPulse 0.8s ease-in-out;
+        }
+        
+        @keyframes colorPulse {
+            0% {
+                background-color: rgba(59, 130, 246, 0.05);
+            }
+            50% {
+                background-color: rgba(59, 130, 246, 0.15);
+            }
+            100% {
+                background-color: transparent;
+            }
+        }
+        
+        /* Shimmer animation for results */
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0,
+                rgba(255, 255, 255, 0.2) 20%,
+                rgba(255, 255, 255, 0.5) 60%,
+                rgba(255, 255, 255, 0)
+            );
+            animation: shimmer 2s infinite;
+        }
+        
+        .dark .shimmer::after {
+            background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0,
+                rgba(255, 255, 255, 0.05) 20%,
+                rgba(255, 255, 255, 0.1) 60%,
+                rgba(255, 255, 255, 0)
+            );
+        }
+        
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        /* Responsive adjustments for input section */
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .textarea-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .email-textarea {
+            flex-grow: 1;
+            min-height: 150px; /* Minimum height */
+            max-height: 500px; /* Maximum height */
+        }
+        
+        /* Equal height cards */
+        .equal-height-cards {
+            display: flex; 
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .equal-height-card {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .equal-height-card-content {
+            flex-grow: 1;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-100 to-blue-100 font-sans text-gray-800 p-4 md:p-8 min-h-screen
-             dark:from-gray-900 dark:to-slate-800 dark:text-gray-200">
+<body class="bg-gradient-to-br from-gray-100 to-blue-100 font-sans text-gray-800 p-4 md:p-8 min-h-screen dark:from-gray-900 dark:to-slate-800 dark:text-gray-200 transition-none">
 
-    <div class="container max-w-3xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-lg
-                dark:bg-gray-800">
-
-        <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8
-                   dark:text-white">
-            EmSum - Email Summarizer 📧
-        </h1>
-        <h2 class="text-lg md:text-xl font-semibold text-gray-700 mb-4 text-center
-                   dark:text-gray-300">
-            Made By: Vaibhav Verma
-        </h2>
-
-        <div class="input-section mb-8">
-            <label for="emailInput" class="block mb-2 text-lg font-medium text-gray-700
-                                          dark:text-gray-300">
-                Paste Email Content:
-            </label>
-            <textarea id="emailInput" rows="12"
-                      class="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-base mb-5 resize-y
-                             dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Paste the full email text here..."></textarea>
-
-            <button id="summarizeBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none
-                           dark:bg-blue-700 dark:hover:bg-blue-600 dark:disabled:opacity-50">
-                Summarize Email ✨
-            </button>
-
-            <div id="loadingIndicator" class="text-center text-blue-600 my-4 hidden
-                                             dark:text-blue-400">
-                <svg class="animate-spin h-6 w-6 text-blue-600 dark:text-blue-400 inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing... please wait.
-            </div>
-
-             <div id="errorDisplay" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mt-5 text-center hidden
-                                         dark:bg-red-900 dark:bg-opacity-50 dark:border-red-700 dark:text-red-300">
+    <!-- Navbar -->
+    <nav class="dark:bg-gray-900/80 bg-white/80 backdrop-blur-sm border-b dark:border-gray-800 border-gray-200 sticky top-0 z-10 transition-theme">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-envelope-open-text text-2xl dark:text-blue-400 text-blue-600 mr-2"></i>
+                        <span class="font-bold text-xl">EmSum</span>
+                    </div>
                 </div>
-        </div>
-
-        <div class="output-section space-y-6">
-
-            <div class="output-box bg-gray-50 p-5 border border-gray-200 rounded-lg shadow-sm
-                                   dark:bg-gray-700 dark:border-gray-600">
-                <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-300 pb-2 mb-3
-                           dark:text-gray-200 dark:border-gray-500">
-                    📌 Summary
-                </h2>
-                <pre id="summaryOutput" class="bg-white p-3 rounded border border-gray-200 text-sm text-gray-600 min-h-[60px]
-                                             dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">Summary will appear here...</pre>
-            </div>
-
-            <div class="output-box bg-gray-50 p-5 border border-gray-200 rounded-lg shadow-sm
-                                   dark:bg-gray-700 dark:border-gray-600">
-                <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-300 pb-2 mb-3
-                           dark:text-gray-200 dark:border-gray-500">
-                    ✅ Tasks and Action Items
-                </h2>
-                <pre id="tasksOutput" class="bg-white p-3 rounded border border-gray-200 text-sm text-gray-600 min-h-[60px]
-                                            dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">Tasks will appear here...</pre>
-            </div>
-
-            <div class="output-box bg-gray-50 p-5 border border-gray-200 rounded-lg shadow-sm
-                                   dark:bg-gray-700 dark:border-gray-600">
-                <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-300 pb-2 mb-3
-                           dark:text-gray-200 dark:border-gray-500">
-                    📊 Sentiment Analysis
-                </h2>
-                <pre id="sentimentOutput" class="bg-white p-3 rounded border border-gray-200 text-sm text-gray-600 min-h-[60px]
-                                              dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">Sentiment analysis will appear here...</pre>
+                <div class="flex items-center">
+                    <!-- Theme Toggle Button -->
+                    <button id="themeToggle" class="p-2 rounded-full dark:bg-gray-800 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-theme">
+                        <i id="themeIcon" class="fas fa-moon dark:text-yellow-300 text-gray-600"></i>
+                    </button>
+                </div>
             </div>
         </div>
+    </nav>
 
-    </div><script src="script.js"></script>
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden dark:bg-gray-900 bg-gray-50 border-b dark:border-gray-800 border-gray-200 transition-theme">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-12 md:py-20">
+                <div class="text-center">
+                    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+                        <span class="dark:gradient-text-dark gradient-text-light">EmSum</span> 
+                        <span class="dark:text-gray-300 text-gray-700">Email Summarizer</span>
+                    </h1>
+                    <p class="mt-3 max-w-md mx-auto text-base dark:text-gray-400 text-gray-600 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                        Powered by AI to extract insights, tasks, and sentiment from your emails
+                    </p>
+                    <div class="mt-5 inline-block text-sm dark:bg-gray-800 bg-gray-100 dark:text-gray-400 text-gray-600 py-1 px-3 rounded-full">
+                        <i class="fas fa-code mr-1"></i> Crafted with care by Vaibhav Verma
+                    </div>
+                    
+                    <!-- Animated Icon -->
+                    <div class="absolute opacity-10 inset-y-0 right-0 w-1/2 flex items-center justify-center">
+                        <i class="fas fa-envelope-open-text text-9xl dark:text-blue-500 text-blue-400 animate-pulse-slow"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="mainSection" class="main-section dark:bg-gray-900/70 bg-gray-50/70 py-12 transition-theme">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:grid-rows-1" style="min-height: 500px;">
+                <!-- Input Section -->
+                <section class="dark:bg-gray-800/80 bg-white/80 backdrop-blur-sm dark:border-gray-700 border-gray-200 border shadow-xl rounded-xl p-6 transition-theme input-section">
+                    <div class="flex items-center mb-4 dark:text-blue-400 text-blue-600">
+                        <i class="fas fa-inbox text-xl mr-3"></i>
+                        <h2 class="text-xl font-semibold">Input Email</h2>
+                    </div>
+                    
+                    <div class="textarea-container mb-4">
+                        <label for="emailInput" class="block dark:text-gray-300 text-gray-700 text-sm font-medium mb-2">
+                            Email Content:
+                        </label>
+                        <div class="relative flex-grow flex flex-col h-full">
+                            <textarea id="emailInput" 
+                                      class="email-textarea custom-scrollbar shadow-inner dark:border-gray-700 border-gray-300 border rounded-lg w-full py-3 px-4 
+                                      dark:text-gray-100 text-gray-800 dark:bg-gray-700/50 bg-gray-50 leading-relaxed 
+                                      focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-theme resize-y"
+                                      placeholder="Paste the full email text here..."></textarea>
+                            <div class="absolute bottom-3 right-3 text-xs dark:text-gray-500 text-gray-400 pointer-events-none">
+                                <i class="far fa-keyboard"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <button id="summarizeBtn"
+                                class="group relative w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r dark:from-blue-600 dark:to-blue-500 from-blue-500 to-blue-600 text-white font-medium rounded-lg 
+                                shadow-lg hover:from-blue-600 hover:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
+                            <span class="absolute inset-0 w-3 bg-gradient-to-r from-transparent to-blue-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition-all"></span>
+                            <i class="fas fa-wand-magic-sparkles mr-2"></i>
+                            Summarize
+                        </button>
+                        
+                        <div id="loadingIndicator" class="text-center dark:text-blue-400 text-blue-600 my-4 hidden">
+                            <div class="inline-flex items-center">
+                                <svg class="animate-spin h-5 w-5 dark:text-blue-400 text-blue-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Processing your email...</span>
+                            </div>
+                        </div>
+                        
+                        <div id="errorDisplay" class="dark:bg-red-900/50 bg-red-100 dark:border-red-700 border-red-300 border dark:text-red-300 text-red-700 px-4 py-3 rounded-lg mt-4 hidden" role="alert">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results Section -->
+                <section class="space-y-6 equal-height-cards">
+                    <!-- Summary Card -->
+                    <div id="summaryCard" class="result-animation equal-height-card dark:bg-gray-800/80 bg-white/80 backdrop-blur-sm dark:border-gray-700 border-gray-200 border shadow-xl rounded-xl p-6 card-hover transition-theme">
+                        <div class="flex items-center mb-4 dark:text-blue-400 text-blue-600">
+                            <i class="fas fa-file-lines text-xl mr-3"></i>
+                            <h2 class="text-xl font-semibold">Summary</h2>
+                        </div>
+                        <pre id="summaryOutput" class="equal-height-card-content custom-scrollbar dark:bg-gray-700/50 bg-gray-100 rounded-lg p-4 text-sm dark:text-gray-200 text-gray-700 whitespace-pre-wrap dark:border-gray-600/50 border-gray-300 border transition-theme">Summary will appear here...</pre>
+                    </div>
+
+                    <!-- Tasks Card -->
+                    <div id="tasksCard" class="result-animation equal-height-card dark:bg-gray-800/80 bg-white/80 backdrop-blur-sm dark:border-gray-700 border-gray-200 border shadow-xl rounded-xl p-6 card-hover transition-theme">
+                        <div class="flex items-center mb-4 dark:text-blue-400 text-blue-600">
+                            <i class="fas fa-list-check text-xl mr-3"></i>
+                            <h2 class="text-xl font-semibold">Tasks and Action Items</h2>
+                        </div>
+                        <pre id="tasksOutput" class="equal-height-card-content custom-scrollbar dark:bg-gray-700/50 bg-gray-100 rounded-lg p-4 text-sm dark:text-gray-200 text-gray-700 whitespace-pre-wrap dark:border-gray-600/50 border-gray-300 border transition-theme">Tasks will appear here...</pre>
+                    </div>
+
+                    <!-- Sentiment Card -->
+                    <div id="sentimentCard" class="result-animation equal-height-card dark:bg-gray-800/80 bg-white/80 backdrop-blur-sm dark:border-gray-700 border-gray-200 border shadow-xl rounded-xl p-6 card-hover transition-theme">
+                        <div class="flex items-center mb-4 dark:text-blue-400 text-blue-600">
+                            <i class="fas fa-face-smile text-xl mr-3"></i>
+                            <h2 class="text-xl font-semibold">Sentiment Analysis</h2>
+                        </div>
+                        <pre id="sentimentOutput" class="equal-height-card-content custom-scrollbar dark:bg-gray-700/50 bg-gray-100 rounded-lg p-4 text-sm dark:text-gray-200 text-gray-700 whitespace-pre-wrap dark:border-gray-600/50 border-gray-300 border transition-theme">Sentiment analysis will appear here...</pre>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Features Section -->
+            <section class="mt-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold dark:text-gray-200 text-gray-800">Why Use EmSum?</h2>
+                    <p class="mt-4 dark:text-gray-400 text-gray-600 max-w-2xl mx-auto">Our AI-powered email analyzer helps you process information faster and extract what matters most.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="dark:bg-gray-800/80 bg-white/80 backdrop-blur-sm dark:border-gray-700 border-gray-200 border rounded-xl p-6 card-hover transition-theme">
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 mb-4">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold dark:text-gray-200 text-gray-800">Save Time</h3>
+                        </div>
+                        <p class="dark:text-gray-400 text-gray-600 text-center">Quickly extract the most important information from lengthy emails without reading every word.</p>
+                    </div>
+                    
+                    <!-- Feature 2 -->
+                    <div class="dark:bg-gray-800/80 bg-white/80 backdrop-blur-sm dark:border-gray-700 border-gray-200 border rounded-xl p-6 card-hover transition-theme">
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 mb-4">
+                                <i class="fas fa-check-double"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold dark:text-gray-200 text-gray-800">Never Miss Tasks</h3>
+                        </div>
+                        <p class="dark:text-gray-400 text-gray-600 text-center">Automatically identify action items and deadlines hidden within email conversations.</p>
+                    </div>
+                    
+                    <!-- Feature 3 -->
+                    <div class="dark:bg-gray-800/80 bg-white/80 backdrop-blur-sm dark:border-gray-700 border-gray-200 border rounded-xl p-6 card-hover transition-theme">
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 mb-4">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold dark:text-gray-200 text-gray-800">Understand Sentiment</h3>
+                        </div>
+                        <p class="dark:text-gray-400 text-gray-600 text-center">Gauge the emotional tone of emails to better prepare your responses and prioritize messages.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dark:bg-gray-900 bg-gray-100 dark:border-t dark:border-gray-800 border-t border-gray-200 transition-theme">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope-open-text text-2xl dark:text-blue-400 text-blue-600 mr-2"></i>
+                        <span class="font-bold text-xl dark:text-gray-300 text-gray-700">EmSum</span>
+                    </div>
+                    <p class="mt-4 dark:text-gray-400 text-gray-600">
+                        Transforming emails into actionable insights
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold dark:text-gray-300 text-gray-700 uppercase tracking-wider">Resources</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li><a href="#" class="dark:text-gray-400 text-gray-600 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Documentation</a></li>
+                        <li><a href="#" class="dark:text-gray-400 text-gray-600 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">API Reference</a></li>
+                        <li><a href="#" class="dark:text-gray-400 text-gray-600 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold dark:text-gray-300 text-gray-700 uppercase tracking-wider">Connect</h3>
+                    <div class="mt-4 flex space-x-6">
+                        <a href="#" class="dark:text-gray-400 text-gray-600 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="dark:text-gray-400 text-gray-600 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="dark:text-gray-400 text-gray-600 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 pt-8 border-t dark:border-gray-800 border-gray-200">
+                <p class="text-center dark:text-gray-500 text-gray-400 text-sm">
+                    &copy; 2025 EmSum - All Rights Reserved
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Keep original script reference unchanged -->
+    <script src="script.js"></script>
+    
+    <!-- Theme toggle and animations script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const htmlEl = document.documentElement;
+            // const mainSection = document.getElementById('mainSection');
+            const summaryCard = document.getElementById('summaryCard');
+            const tasksCard = document.getElementById('tasksCard');
+            const sentimentCard = document.getElementById('sentimentCard');
+            const summarizeBtn = document.getElementById('summarizeBtn');
+            const emailInput = document.getElementById('emailInput');
+            
+            // Result elements
+            const summaryOutput = document.getElementById('summaryOutput');
+            const tasksOutput = document.getElementById('tasksOutput');
+            const sentimentOutput = document.getElementById('sentimentOutput');
+            
+            // Check for saved theme preference or use system preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                htmlEl.classList.remove('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else if (savedTheme === 'dark') {
+                htmlEl.classList.add('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                htmlEl.classList.add('dark');
+            } else {
+                htmlEl.classList.remove('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+            
+            // Toggle theme
+            themeToggleBtn.addEventListener('click', function() {
+                if (htmlEl.classList.contains('dark')) {
+                    htmlEl.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                } else {
+                    htmlEl.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            });
+            
+            // Make input section responsive to text content
+            function adjustTextareaLayout() {
+                // Ensure proper flex layout based on content
+                const parent = emailInput.closest('.input-section');
+                
+                // Adjust textarea height based on content with a minimum
+                emailInput.style.height = 'auto'; // Reset height
+                emailInput.style.height = Math.max(150, Math.min(emailInput.scrollHeight, 500)) + 'px';
+            }
+            
+            // Call initially and on each input
+            adjustTextareaLayout();
+            emailInput.addEventListener('input', adjustTextareaLayout);
+            
+            // Also adjust on window resize
+            window.addEventListener('resize', adjustTextareaLayout);
+            
+            // Preserved original functionality while adding animations
+            // This will hook into your script.js functionality without changing it
+            
+            // Store the original values to detect changes
+            let originalSummary = summaryOutput.textContent;
+            let originalTasks = tasksOutput.textContent;
+            let originalSentiment = sentimentOutput.textContent;
+            
+            // Add animation when results are updated
+            // This uses MutationObserver to detect when your script.js updates the content
+            const observeChanges = (element, card) => {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                            // If content has changed from the default placeholder
+                            if (element.textContent !== "Summary will appear here..." && 
+                                element.textContent !== "Tasks will appear here..." && 
+                                element.textContent !== "Sentiment analysis will appear here...") {
+                                
+                                // Add animation class
+                                card.classList.add('active');
+                                
+                                // Add shimmer effect to the pre element
+                                element.classList.add('shimmer');
+                                
+                                // Remove shimmer after animation completes
+                                setTimeout(() => {
+                                    element.classList.remove('shimmer');
+                                }, 2000);
+                            }
+                        }
+                    });
+                });
+                
+                // Observe changes to the element and its children
+                observer.observe(element, { 
+                    characterData: true, 
+                    childList: true,
+                    subtree: true 
+                });
+            };
+            
+            // Observe each output element
+            observeChanges(summaryOutput, summaryCard);
+            observeChanges(tasksOutput, tasksCard);
+            observeChanges(sentimentOutput, sentimentCard);
+            
+            // Add click event to the summarize button to animate the main section
+            // This works in parallel with your existing click handler in script.js
+            summarizeBtn.addEventListener('click', function() {
+                // Change main section color temporarily
+                mainSection.classList.add('color-change');
+                
+                // Remove animation classes after 2 seconds
+                setTimeout(() => {
+                    mainSection.classList.remove('color-change');
+                    
+                    // Add staggered animation to result cards
+                    setTimeout(() => {
+                        if (summaryOutput.textContent !== originalSummary) {
+                            summaryCard.classList.add('active');
+                        }
+                    }, 100);
+                    
+                    setTimeout(() => {
+                        if (tasksOutput.textContent !== originalTasks) {
+                            tasksCard.classList.add('active');
+                        }
+                    }, 300);
+                    
+                    setTimeout(() => {
+                        if (sentimentOutput.textContent !== originalSentiment) {
+                            sentimentCard.classList.add('active');
+                        }
+                    }, 500);
+                }, 800);
+            });
+        });
+    </script>
 </body>
 </html>

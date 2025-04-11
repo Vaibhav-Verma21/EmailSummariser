@@ -7,6 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const sentimentOutput = document.getElementById('sentimentOutput');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const errorDisplay = document.getElementById('errorDisplay');
+    function typeEffect(element, text, speed = 15) {
+        element.textContent = '';
+        let i = 0;
+        function type() {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            }
+        }
+        type();
+    }
 
     // Add an event listener to the button that triggers when clicked
     summarizeBtn.addEventListener('click', async () => {
@@ -74,9 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             // --- Display the results in the respective output areas ---
-            summaryOutput.textContent = data.summary || "No summary generated.";
-            tasksOutput.textContent = data.tasks || "No tasks identified.";
-            sentimentOutput.textContent = data.sentiment || "Sentiment analysis unavailable.";
+            // summaryOutput.textContent = data.summary || "No summary generated.";
+            // tasksOutput.textContent = data.tasks || "No tasks identified.";
+            // sentimentOutput.textContent = data.sentiment || "Sentiment analysis unavailable.";
+            typeEffect(summaryOutput, data.summary || "No summary generated.");
+            typeEffect(tasksOutput, data.tasks || "No tasks identified.");
+            typeEffect(sentimentOutput, data.sentiment || "Sentiment analysis unavailable.");
+
 
         } catch (error) {
             // --- Handle any errors that occurred during the fetch or processing ---
