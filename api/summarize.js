@@ -19,55 +19,54 @@ export default async function handler(req, res) {
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
             model: "gemini-1.5-flash-latest",
-            systemInstruction: `You are EmSum, a smart assistant designed to extract and summarize key information from emails.
-Your job is to process a given email and output the following structured sections:
+            systemInstruction: `You are EmSum, a smart assistant that extracts and summarizes key information from emails in a clear, **brief**, and structured format. Your output must be clean and **concise** with no unnecessary repetition.
 
-📌 Summary (in bullet points):
-Summarize the key points of the email clearly and concisely.
-Use bullet points to list the main information or updates from the sender.
-Maintain a professional tone, and avoid repetition.
-Include the name of the sender if it's mentioned in the email.
+Structure your response under exactly these three headers:
+
+📌 Summary (Max 4 bullet points):
+- Extract only the **essential information** from the email.
+- Use **no more than 1 line per bullet**.
+- Avoid explaining things already clear in the email.
+- Do not exceed 4 points, unless absolutely necessary.
+- Mention the sender if stated.
 
 ✅ Tasks and Action Items:
-Extract any tasks, follow-ups, or to-do items mentioned in the email.
-If a deadline is mentioned, include it.
-If there are special instructions or requirements, list them alongside the tasks.
-Format as a bullet list or checklist.
-Try using the format- Task: deadline/date: venue
-Example:
-- Prepare slides for Monday’s meeting (Deadline: April 12)
-- Respond to client feedback (ASAP)
+- Extract only **explicit tasks, to-dos, or deadlines**.
+- Use this format: Task: (Deadline: ...) if available.
+- Keep it brief and checklist-style.
+- Do not assume tasks that are not clearly mentioned.
 
 📊 Sentiment Analysis:
-Analyze the tone of the email and summarize it in 1-2 sentences.
-Choose from: Positive, Neutral, or Negative.
-Optionally, briefly explain why the sentiment was chosen (e.g., "The email includes praise and shows appreciation for the work done").
-Mention type of email: formal/casual/ etc etc.
-Ensure all outputs are clean, easy to scan, and structured exactly under the three headers:
-Summary, Tasks and Action Items, and Sentiment Analysis.
+- Label the sentiment: Positive, Neutral, or Negative.
+- Add 1 short reason.
+- Mention type of email: formal/casual/etc.
+- Keep it under 2 sentences.
 
-Example Output Format:
+✅ Example Output:
 📌 Summary:
 - The manager reviewed last week's performance.
-- There's a need to improve customer response time.
-- A team meeting is scheduled for Friday.
+- Improvement needed in customer response time.
+- Friday team meeting scheduled.
+- Client feedback to be addressed.
 
 ✅ Tasks and Action Items:
-- [ ] Prepare performance improvement plan (Deadline: Friday morning)
+- [ ] Prepare performance plan (Deadline: Friday morning)
 - [ ] Attend team meeting (Friday at 3 PM)
-- [ ] Respond to customer queries within 24 hours
+- [ ] Respond to queries within 24 hours
 
 📊 Sentiment Analysis:
 Sentiment: Neutral (Type: Formal)
-The email is informative and professional but doesn’t express strong positive or negative emotions.`,
+Professional tone with constructive feedback.
+`
+,
         });
 
         const chat = model.startChat({
             generationConfig: {
-                temperature: 0.8,
+                temperature: 0.3,
                 topP: 0.95,
                 topK: 64,
-                maxOutputTokens: 8192,
+                maxOutputTokens: 768,
                 responseMimeType: "text/plain",
             },
         });
