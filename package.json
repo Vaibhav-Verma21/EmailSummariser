@@ -1,0 +1,13 @@
+{
+    "name": "email-summarizer",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "start": "vercel dev",
+        "deploy": "vercel"
+    },
+    "dependencies": {
+        "@google/genai": "^0.2.0",
+        "dotenv": "^16.4.5"
+    }
+}
