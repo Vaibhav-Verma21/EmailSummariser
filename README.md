@@ -45,5 +45,5 @@ npm run deploy
 ## Tech Stack
 
 - **Frontend**: HTML5, Tailwind CSS, JavaScript (Vanilla)
-- **Backend**: Vercel Serverless Functions (Node.js)
-- **AI**: Gemini 3 Flash API (@google/genai)
+- **Backend**: Vercel Serverless Functions (Node.js v22.x)
+- **AI**: Gemini 3 Flash API (@google/genai ^0.2.0)
