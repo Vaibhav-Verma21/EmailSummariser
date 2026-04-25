@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-        return res.status(500).json({ error: "GEMINI_API_KEY is not set in environment." });
+        return res.status(500).json({ error: "GEMINI_API_KEY is not set." });
     }
 
     const { emailText } = req.body;
@@ -18,56 +18,21 @@ export default async function handler(req, res) {
     try {
         const ai = new GoogleGenAI({ apiKey });
         
-        const systemInstruction = `You are EmSum, a smart assistant that extracts and summarizes key information from emails in a clear, **brief**, and structured format. Your output must be clean and **concise** with no unnecessary repetition.
-
+        // Simpler prompt to ensure fast response
+        const prompt = `You are EmSum, a smart assistant. Summarize this email.
+        
 Structure your response under exactly these three headers:
+📌 Summary: (Max 4 bullets)
+✅ Tasks and Action Items: (Checklist style)
+📊 Sentiment Analysis: (1 sentence)
 
-📌 Summary (Max 4 bullet points):
-- Extract only the **essential information** from the email.
-- Use **no more than 1 line per bullet**.
-- Avoid explaining things already clear in the email.
-- Do not exceed 4 points, unless absolutely necessary.
-- Mention the sender if stated.
-
-✅ Tasks and Action Items:
-- Extract only **explicit tasks, to-dos, or deadlines**.
-- Use this format: Task: (Deadline: ...) if available.
-- Keep it brief and checklist-style.
-- Do not assume tasks that are not clearly mentioned.
-
-📊 Sentiment Analysis:
-- Label the sentiment: Positive, Neutral, or Negative.
-- Add 1 short reason.
-- Mention type of email: formal/casual/etc.
-- Keep it under 2 sentences.
-
-✅ Example Output:
-📌 Summary:
-- The manager reviewed last week's performance.
-- Improvement needed in customer response time.
-- Friday team meeting scheduled.
-- Client feedback to be addressed.
-
-✅ Tasks and Action Items:
-- [ ] Prepare performance plan (Deadline: Friday morning)
-- [ ] Attend team meeting (Friday at 3 PM)
-- [ ] Respond to queries within 24 hours
-
-📊 Sentiment Analysis:
-Sentiment: Neutral (Type: Formal)
-Professional tone with constructive feedback.`;
+Email Content:
+${emailText}`;
 
         const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: [
-                { role: "user", parts: [{ text: `${systemInstruction}\n\nEmail to summarize:\n${emailText}` }] }
-            ],
-            config: {
-                temperature: 0.3,
-                topP: 0.95,
-                topK: 64,
-                maxOutputTokens: 768,
-            }
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            // Removed complex config to speed up initial response
         });
 
         const text = response.text;
@@ -78,7 +43,7 @@ Professional tone with constructive feedback.`;
 
         res.status(200).json({ summary, tasks, sentiment });
     } catch (error) {
-        console.error("Error:", error);
-        res.status(500).json({ error: "Server error", details: error.message });
+        console.error("Vercel Function Error:", error);
+        res.status(500).json({ error: "API Timeout or Error", details: error.message });
     }
 }
